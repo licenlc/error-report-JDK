@@ -10,7 +10,7 @@ export const DEFAULT_CONFIG = {
   repeat: 5,
   // 文件是否压缩，使用sourmap
   sourcemap: false,
-  // 上报使用的方式，ajax 或者 img.src方式
+  // 上报使用的方式，ajax 或者 img.src方式 {img, ajax}
   type: 'img',
   // 错误级别 1-debug 2-info 4-error
   level: 4,

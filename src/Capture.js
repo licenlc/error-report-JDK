@@ -16,11 +16,11 @@ export const handlerStack = (stack) => {
  *  https://blog.sentry.io/2016/01/04/client-javascript-reporting-window-onerror
  * @param {*} error 
  */
-const handlerError = (error) => {
+const handlerError = (type, error, message = '', url = '', line = '', column= '') => {
   if (error.stack) {
     const urlInfo = error.stack.match('https?://[^\n]+')[0] || ''
-    let url = urlInfo ? urlInfo[0] : ''
-    let rowInfo = url.match(':(\\d+):(\\d+)')
+    let errorUrl = urlInfo ? urlInfo[0] : ''
+    let rowInfo = errorUrl.match(':(\\d+):(\\d+)')
     if (!rowInfo) {
       rowInfo = [0, 0, 0]
     }
@@ -28,10 +28,11 @@ const handlerError = (error) => {
 
   return {
     message: message || error.stack,
-    url: errorUrl || '',// 待修改
+    url: url || errorUrl,// 待修改
     line: line || rowInfo[1],
     column: column || rowInfo[2],
-    stack: error
+    stack: error,
+    type: type
   }
 }
 
@@ -40,7 +41,7 @@ const handlerError = (error) => {
  */
 export function onError () {
   window.onerror = function (message, url, line, column, stack) {
-    captureException(handlerError(stack))
+    captureException(handlerError('onerror', stack, message, url, line, column))
   }
 }
 
@@ -50,7 +51,7 @@ export function onError () {
  * 也可能是 undefined
  */
 const handlerPormiseReject = (error) => {
-  captureException(handlerError(error.reason))
+  captureException(handlerError('unhandledrejection', error.reason))
 }
 
 export const onPromiseReject = () => {

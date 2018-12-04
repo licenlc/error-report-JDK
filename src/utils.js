@@ -42,4 +42,3 @@ export const toQueryString = (obj) => {
   }
   return ret.join('&')
 }
-
