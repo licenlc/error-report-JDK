@@ -1,4 +1,4 @@
-export class Net {
+export class NetWork {
   constructor (config) {
     this.config = config
     this.type = config.type

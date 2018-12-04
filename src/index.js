@@ -1,8 +1,10 @@
 import { DEFAULT_CONFIG } from './config'
-import TrackerError from './TrackerError'
-import { isObj, isWindow} from './utils'
+import { TrackerError } from './TrackerError'
+import { isObj, isWindow } from './utils'
 
-function init(config = {}) {
+let tracker;
+
+export function init(config = {}) {
   // 判断是否在浏览器环境
   if (!isWindow) {
     return
@@ -15,5 +17,8 @@ function init(config = {}) {
     return
   }
   config = Object.assign(DEFAULT_CONFIG, config)
-  new TrackerError(config).install()
+  if (!tracker) {
+    tracker = new TrackerError(config).install()
+  }
 }
+

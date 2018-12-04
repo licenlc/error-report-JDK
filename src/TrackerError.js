@@ -1,4 +1,4 @@
-import {onPromiseReject, onError, offPromiseReject } from './Capture'
+import { install, uninstall } from './Capture'
 import NetWork from './Network'
 
 export class ErrorTracker {
@@ -10,15 +10,14 @@ export class ErrorTracker {
 
   install () {
     this.netWork = new NetWork(this.config)
-    onPromiseReject()
-    onError()
+    install()
   }
   
   uninstall () {
-    offPromiseReject()
+    uninstall()
   }
 
-  report () {
+  report (errpr) {
     this.netWork.report(error)
   }
 }
