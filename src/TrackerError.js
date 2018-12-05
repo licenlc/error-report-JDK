@@ -1,23 +1,17 @@
-import { install, uninstall } from './Capture'
-import NetWork from './Network'
+import { onPromiseReject, onError, offPromiseReject } from './Capture'
 
-export class ErrorTracker {
-  constructor (config = {}) {
-    this.config = config
-    this.netWork = null
+export class TrackerError {
+
+  constructor () {
     this.install()
   }
 
   install () {
-    this.netWork = new NetWork(this.config)
-    install()
+    onPromiseReject()
+    onError()
   }
   
   uninstall () {
-    uninstall()
-  }
-
-  report (errpr) {
-    this.netWork.report(error)
+    offPromiseReject()
   }
 }

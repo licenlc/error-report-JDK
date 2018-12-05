@@ -1,5 +1,3 @@
-import { getUserAgent, getOS } from 'deviceInfo'
-
 /**
  * 处理stack中信息
  * 
@@ -7,14 +5,13 @@ import { getUserAgent, getOS } from 'deviceInfo'
  */
 export const handlerStack = (stack) => {
 }
-
 /**
- * 添加浏览器信息，设备信息，一起上报，方便定位,后期可以扩展
- * @param {Object} error 
+ * 添加系统信息
+ * @param {Object} error
  */
-function addCustomInfo (error) {
+function addSystemInfo (error) {
   let href = { href: window.location.href }
-  return Object.assign({}, href, getUserAgent(), getOS(), error)
+  return Object.assign({}, href, error)
 }
 
 /**
@@ -23,9 +20,11 @@ function addCustomInfo (error) {
  * promise 中报错也没有
  * 参考：
  *  https://blog.sentry.io/2016/01/04/client-javascript-reporting-window-onerror
- * @param {*} error 
+ * @param {*} error
+ * 
+ * 
  */
-const handlerError = (type = '', error, message = '', url = '', line = '', column= '') => {
+export const handlerError = (type = '', error, message = '', url = '', line = '', column= '') => {
   if (error.stack) {
     const urlInfo = error.stack.match('https?://[^\n]+')[0] || ''
     let errorUrl = urlInfo ? urlInfo[0] : ''
@@ -44,12 +43,11 @@ const handlerError = (type = '', error, message = '', url = '', line = '', colum
     type: type
   }
 }
-
 /**
  * window.onerror
  */
-function onError () {
-  window.onerror = function (message, url, line, column, stack) {
+export function onError () {
+  window.onerror = (message, url, line, column, stack) => {
     captureException(handlerError('onerror', stack, message, url, line, column))
   }
 }
@@ -63,14 +61,25 @@ const handlerPormiseReject = (error) => {
   captureException(handlerError('unhandledrejection', error.reason))
 }
 
-const onPromiseReject = () => {
+export const onPromiseReject = () => {
   window.addEventListener && window.addEventListener('unhandledrejection', handlerPormiseReject)
 }
 
-const offPromiseReject = () => {
+export const offPromiseReject = () => {
   window.removeEventListener('unhandledrejection', handlerPormiseReject)
 }
-
+/**
+ * 判断是否大于最大重复次数
+ */
+let logMap = {}
+export const repeatTime = (info) => {
+  let key = `${info.message}&&${window.location.href}`
+  logMap[key] = (parseInt(logMap[key], 10) || 0) + 1
+  return logMap[key]
+}
+/**
+ * 
+ */
 let logArr = []
 export const captureException = (info = {}) => {
   let flag = false
@@ -88,20 +97,11 @@ export const captureException = (info = {}) => {
   if (flag) {
     return
   }
-  info = addCustomInfo(info)
+  info = addSystemInfo(info)
   if (logArr.length > 20) {
     logArr.shift()
   } else {
     logArr.push(info)
   }
   return info
-}
-
-export const install = ()=> {
-  onPromiseReject()
-  onError ()
-}
-
-export const uninstall = () => {
-  offPromiseReject()
 }

@@ -1,7 +1,9 @@
 export const isWindow = typeof window !== 'undefined'
 
+let objToString = Object.prototype.toString
+
 export const isError = (value) => {
-  switch (Object.prototype.toString.call(value)) {
+  switch (objToString.call(value)) {
     case '[object Error]':
       return true
     case '[object Exception]':
@@ -13,32 +15,44 @@ export const isError = (value) => {
   }
 }
 
-export const isDOMError = (value) => Object.prototype.toString.call(value) === '[object DOMException]'
+export const isDOMError = (value) => objToString.call(value) === '[object DOMException]'
 
-export const isException = (value) => Object.prototype.toString.call(value) === '[object Exception]'
+export const isException = (value) => objToString.call(value) === '[object Exception]'
 
 export const isObj = (value) => typeof value === 'object' && !!value
-/*将json对象转成地址栏参数*/
+
+export const extend = (target = {}) => {
+  for (let i = 1; s < argument.length ; i++) {
+    for (const key in argument[i]) {
+      target[key] = argument[i][key]
+    }
+  }
+  return target
+}
+/**
+ * 将json对象转成地址栏参数
+ * params { Object } obj
+ * 
+ * return { String }
+ * */
 export const toQueryString = (obj) => {
-  var ret = []
-  function toQueryPair(key, value) {
-      if (typeof value == 'undefined'){
-          return key
-      }
-      return key + '=' + (value === null ? '' : String(value))
+  if (isObj(obj)) {
+    let ret = []
+    for(const key in obj) {
+        let values = obj[key]
+        if(values && values.constructor == Array) {
+            let queryValues = []
+            for (let i = 0, len = values.length, value; i < len; i++) {
+                value = values[i]
+                queryValues.push(key, value)
+            }
+            ret = ret.concat(queryValues)
+         } else {
+            ret.push(key, values)
+        }
+    }
+    return ret.join('&')
+  } else {
+    return ''
   }
-  for(var key in obj){
-      var values = obj[key]
-      if(values && values.constructor == Array){//数组
-          var queryValues = []
-          for (var i = 0, len = values.length, value; i < len; i++) {
-              value = values[i]
-              queryValues.push(toQueryPair(key, value))
-          }
-          ret = ret.concat(queryValues)
-      }else{ //字符串
-          ret.push(toQueryPair(key, values))
-      }
-  }
-  return ret.join('&')
 }

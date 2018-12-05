@@ -1,3 +1,5 @@
+import { getUserAgent, getOS } from './system'
+
 export class NetWork {
   constructor (config) {
     this.config = config
@@ -6,10 +8,11 @@ export class NetWork {
   }
 
   report (error) {
-    if (this.type === 'img') {
-      new Image().src= `${this.reportUrl}?${toQueryString(error)}`
-    } else if (this.type === 'ajax') {
-      // 待完善
+    // 是否大于重复上报的次数限制
+    if (repeatTime(error) > this.config.repeatTime) {
+      return
     }
+    const info = Object.assign({}, {map: this.config.sourcemap}, getUserAgent(), getOS())
+    new Image().src= `${this.reportUrl}?${toQueryString(info)}`
   }
 }

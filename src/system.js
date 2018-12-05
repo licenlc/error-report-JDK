@@ -5,7 +5,6 @@
  const isAlipayReg = /AlipayClient/i
  const weChatReg = /MicroMessenger/i
  const userAgent = window.navigator.userAgent
-
  /**
   * 获取浏览器信息,目前只支持微信和支付宝内置浏览器(业务需求)
   */
@@ -18,7 +17,6 @@
     return { userAgent: 'others' }
   }
  }
-
  /**
   * 获取操作系统信息
   */
