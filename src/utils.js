@@ -22,7 +22,7 @@ export const isException = (value) => objToString.call(value) === '[object Excep
 export const isObj = (value) => typeof value === 'object' && !!value
 
 export const extend = (target = {}, ...source) => {
-  for (let i = 1; i < source.length ; i++) {
+  for (let i = 0; i < source.length ; i++) {
     for (const key in source[i]) {
       target[key] = source[i][key]
     }

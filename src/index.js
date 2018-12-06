@@ -13,9 +13,7 @@ class ErrorCatch {
     if (!isWindow || !isObj(config) || !config.reportUrl) {
       return
     }
-    let extendConf = extend(DEFAULT_CONFIG, config)
-    ErrorCatch.config = config
-    netWork.init().setConfig(extendConf)
+    netWork.init().setConfig(extend(DEFAULT_CONFIG, config))
     flag = true
     return this
   }
@@ -24,7 +22,6 @@ class ErrorCatch {
     captureException(handlerError(type, error))
   }
 }
-ErrorCatch.config = DEFAULT_CONFIG
 
 export default ErrorCatch
 
