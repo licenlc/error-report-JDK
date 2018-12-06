@@ -21,10 +21,10 @@ export const isException = (value) => objToString.call(value) === '[object Excep
 
 export const isObj = (value) => typeof value === 'object' && !!value
 
-export const extend = (target = {}) => {
-  for (let i = 1; s < argument.length ; i++) {
-    for (const key in argument[i]) {
-      target[key] = argument[i][key]
+export const extend = (target = {}, ...source) => {
+  for (let i = 1; i < source.length ; i++) {
+    for (const key in source[i]) {
+      target[key] = source[i][key]
     }
   }
   return target
@@ -32,27 +32,16 @@ export const extend = (target = {}) => {
 /**
  * 将json对象转成地址栏参数
  * params { Object } obj
- * 
  * return { String }
  * */
-export const toQueryString = (obj) => {
+export const toQueryString = (obj = {}) => {
   if (isObj(obj)) {
     let ret = []
     for(const key in obj) {
-        let values = obj[key]
-        if(values && values.constructor == Array) {
-            let queryValues = []
-            for (let i = 0, len = values.length, value; i < len; i++) {
-                value = values[i]
-                queryValues.push(key, value)
-            }
-            ret = ret.concat(queryValues)
-         } else {
-            ret.push(key, values)
-        }
+      let value = obj[key]
+      ret.push(`${key}=${value}`)
     }
     return ret.join('&')
-  } else {
-    return ''
   }
+  return ''
 }

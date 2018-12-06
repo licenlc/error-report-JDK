@@ -2,9 +2,20 @@
  * 收集浏览器信息
  * (目前只支持在微信和支付宝，业务限制)，屏幕分辨率，系统版本
  */
- const isAlipayReg = /AlipayClient/i
- const weChatReg = /MicroMessenger/i
- const userAgent = window.navigator.userAgent
+const isAlipayReg = /AlipayClient/i
+const weChatReg = /MicroMessenger/i
+const UCReg = /UCBrowser/i
+const QQReg = /MQQBrowser/i
+const userAgent = window.navigator.userAgent
+const reg = /(UCBrowser|MQQBrowser|AlipayClient|MicroMessenger|firefox|version).*?([\d.]+)/i
+let info = userAgent.match(reg)
+
+ export function getBroswerInfo () {
+   return {
+     userAgent: info[1].replace('/version/i', 'safari'),
+     version: info[2]
+   }
+ }
  /**
   * 获取浏览器信息,目前只支持微信和支付宝内置浏览器(业务需求)
   */
@@ -14,7 +25,7 @@
   } else if (weChatReg.test(userAgent)) {
     return { userAgent: 'weChart' }
   } else {
-    return { userAgent: 'others' }
+    return { userAgent: userAgent }
   }
  }
  /**

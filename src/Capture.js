@@ -1,17 +1,20 @@
+import { NetWork} from './NetWork'
+
+let work = new NetWork()
+
+export const netWork = work
 /**
  * 处理stack中信息
  * 
  * @param {Ojbect} stack 
  */
-export const handlerStack = (stack) => {
-}
-/**
- * 添加系统信息
- * @param {Object} error
- */
-function addSystemInfo (error) {
-  let href = { href: window.location.href }
-  return Object.assign({}, href, error)
+export const handlerStack = (error) => {
+  let stack = error.stack.replace(/\n/gi, "").split(/\bat\b/).slice(0, 9).join("@").replace(/\?[^:]+/gi, "");
+  const msg = error.toString();
+  if (stack.indexOf(msg) < 0) {
+      stack = msg + "@" + stack;
+  }
+  return stack;
 }
 
 /**
@@ -25,21 +28,22 @@ function addSystemInfo (error) {
  * 
  */
 export const handlerError = (type = '', error, message = '', url = '', line = '', column= '') => {
+  let [ errorUrl, rowInfo ] = []
   if (error.stack) {
     const urlInfo = error.stack.match('https?://[^\n]+')[0] || ''
-    let errorUrl = urlInfo ? urlInfo[0] : ''
-    let rowInfo = errorUrl.match(':(\\d+):(\\d+)')
+    errorUrl = urlInfo instanceof Array ? urlInfo[0] : urlInfo
+    rowInfo = errorUrl.match(':(\\d+):(\\d+)')
     if (!rowInfo) {
       rowInfo = [0, 0, 0]
     }
   }
-
+  console.log('message:', (message || error.message))
   return {
-    message: message || error.stack,
-    url: url || errorUrl,// 待修改
+    message: encodeURIComponent((message || error.message)),
+    url: encodeURIComponent(url || errorUrl),// 待修改
     line: line || rowInfo[1],
     column: column || rowInfo[2],
-    stack: error,
+    stack: encodeURIComponent(error),
     type: type
   }
 }
@@ -58,7 +62,7 @@ export function onError () {
  * 也可能是 undefined
  */
 const handlerPormiseReject = (error) => {
-  captureException(handlerError('unhandledrejection', error.reason))
+  captureException(handlerError('promise', error.reason, error.reason.message))
 }
 
 export const onPromiseReject = () => {
@@ -72,36 +76,25 @@ export const offPromiseReject = () => {
  * 判断是否大于最大重复次数
  */
 let logMap = {}
-export const repeatTime = (info) => {
+export const repeatTime = (info, flag) => {
   let key = `${info.message}&&${window.location.href}`
-  logMap[key] = (parseInt(logMap[key], 10) || 0) + 1
-  return logMap[key]
+  if (flag) {
+    logMap[key] = (parseInt(logMap[key], 10) || 0) + 1
+  }
+  return parseInt(logMap[key])
 }
-/**
- * 
- */
+
 let logArr = []
 export const captureException = (info = {}) => {
-  let flag = false
   for (let i  = 0 ; i < logArr.length ; i++) {
     let log = logArr[i]
-    if (info.message === log.message && 
-      info.url === log.url && 
-      info.column === log.column && 
-      info.line === log.line) 
-    {
-      flag = true
-      return
+    if (!(info.message === log.message && info.url === log.url && info.column === log.column && info.line === log.line)) {
+      logArr.push(info)
     }
   }
-  if (flag) {
-    return
-  }
-  info = addSystemInfo(info)
-  if (logArr.length > 20) {
+  repeatTime(info, true)
+  if (logArr.length > 30) {
     logArr.shift()
-  } else {
-    logArr.push(info)
   }
-  return info
+  work.report(info)
 }

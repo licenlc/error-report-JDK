@@ -1,40 +1,31 @@
 import { DEFAULT_CONFIG } from './config'
-import { TrackerError } from './TrackerError'
 import { isObj, isWindow, extend } from './utils'
-import { NetWork } from './Network'
-import { handlerError, captureException } from './Capture'
+import { handlerError, captureException, netWork } from './Capture'
 
-let tracker
-let netWork
+let flag = false
 
-export class ErrorCatch {
-  constructor (config = DEFAULT_CONFIG) {
-    this.config = extend({}, DEFAULT_CONFIG, config)
+class ErrorCatch {
+  static setConfig(config) {
+    if (flag) {
+      console.log('已经初始化了')
+      return this
+    }
+    if (!isWindow || !isObj(config) || !config.reportUrl) {
+      return
+    }
+    let extendConf = extend(DEFAULT_CONFIG, config)
+    ErrorCatch.config = config
+    netWork.init().setConfig(extendConf)
+    flag = true
+    return this
   }
 
-  static init(config) {
-    // 判断是否在浏览器环境
-    if (!isWindow) {
-      return
-    }
-    if (!isObj(config)) {
-      console.error('config is not a object')
-      return
-    } else if (!config.reportUrl) {
-      console.error('reportUrl is null')
-      return
-    }
-    config = extend(DEFAULT_CONFIG, config)
-
-    if (!tracker) {
-      tracker = new TrackerError()
-    }
-    if (!netWork) {
-      netWork = new NetWork(config)
-    }
-  }
-
-  report (type = 'Vue', error) {
-    netWork.report(captureException(handlerError(type, error)))
+  static report (type = 'Vue', error) {
+    captureException(handlerError(type, error))
   }
 }
+ErrorCatch.config = DEFAULT_CONFIG
+
+export default ErrorCatch
+
+

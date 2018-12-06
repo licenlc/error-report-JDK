@@ -9,7 +9,7 @@ export const DEFAULT_CONFIG = {
   // 重复上报的次数
   repeat: 5,
   // 文件是否压缩，使用sourmap
-  sourcemap: false,
+  sourcemap: true,
   // 上报使用的方式，ajax 或者 img.src方式 {img, ajax}
   // type: 'img',
   // 错误级别 1-debug 2-info 4-error

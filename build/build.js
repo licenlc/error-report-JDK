@@ -1,7 +1,6 @@
 const fs = require('fs')
 const path = require('path')
 const rollup = require('rollup')
-const version = require('../package.json').version
 const babel = require('rollup-plugin-babel')
 const uglify = require('uglify-js')
 const zlib = require('zlib')
