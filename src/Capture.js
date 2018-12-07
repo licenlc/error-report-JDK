@@ -28,16 +28,14 @@ export const handlerStack = (error) => {
  * 
  */
 export const handlerError = (type = '', error, message = '', url = '', line = '', column= '') => {
-  let [ errorUrl, rowInfo ] = []
-  if (error.stack) {
+
+  let [ errorUrl, rowInfo ] = ['', [0, 0, 0]]
+
+  if (error && error.stack) {
     const urlInfo = error.stack.match('https?://[^\n]+')[0] || ''
     errorUrl = urlInfo instanceof Array ? urlInfo[0] : urlInfo
     rowInfo = errorUrl.match(':(\\d+):(\\d+)')
-    if (!rowInfo) {
-      rowInfo = [0, 0, 0]
-    }
   }
-  console.log('message:', (message || error.message))
   return {
     message: encodeURIComponent((message || error.message)),
     url: encodeURIComponent(url || errorUrl),// 待修改
@@ -47,6 +45,7 @@ export const handlerError = (type = '', error, message = '', url = '', line = ''
     type: type
   }
 }
+
 /**
  * window.onerror
  */
@@ -62,7 +61,7 @@ export function onError () {
  * 也可能是 undefined
  */
 const handlerPormiseReject = (error) => {
-  captureException(handlerError('promise', error.reason, error.reason.message))
+  captureException(handlerError('unhandledrejection', error.reason, error.reason.message))
 }
 
 export const onPromiseReject = () => {
@@ -76,9 +75,9 @@ export const offPromiseReject = () => {
  * 判断是否大于最大重复次数
  */
 let logMap = {}
-export const repeatTime = (info, flag) => {
+export const repeatTime = (info, flag = false) => {
   let key = `${info.message}&&${window.location.href}`
-  if (flag) {
+  if (flag && parseInt(logMap[key]) < netWork.config.repeat) {
     logMap[key] = (parseInt(logMap[key], 10) || 0) + 1
   }
   return parseInt(logMap[key])
@@ -93,6 +92,9 @@ export const captureException = (info = {}) => {
     }
   }
   repeatTime(info, true)
+  console.log('===============================')
+  console.log(JSON.stringify(logMap))
+  console.log('=======++++++++++++=========')
   if (logArr.length > 30) {
     logArr.shift()
   }

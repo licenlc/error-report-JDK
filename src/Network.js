@@ -1,4 +1,4 @@
-import { getBroswerInfo, getOS } from './system'
+import { getUserAgent, getOS } from './system'
 import { repeatTime } from './Capture'
 import { toQueryString, extend } from './utils'
 import { onPromiseReject, onError, offPromiseReject } from './Capture'
@@ -25,7 +25,6 @@ export class NetWork {
     this.config = config
     this.type = config.type
     this.reportUrl = config.reportUrl
-    console.log('this.reportUrl:', this.reportUrl)
   }
 
   report (error) {
@@ -33,8 +32,15 @@ export class NetWork {
     if (repeatTime(error) > this.config.repeatTime) {
       return
     }
-    const info = extend({}, {map: true}, getBroswerInfo(), getOS(), { href: encodeURIComponent(window.location.href) }, error)
-    console.log('上报路径：', `${this.reportUrl}?${toQueryString(info)}`)
+    const info = extend({}, {m: this.config.map}, getUserAgent(), getOS(), { location: encodeURIComponent(window.location.href) }, {date: this.config.data}, error)
+    // for (let key in info) {
+    //   if (['message', 'href', 'stack', 'url', 'error'].indexOf(key) > -1) {
+    //     console.log(`key:${key}== ${decodeURIComponent(info[key])}`)
+    //   } else {
+    //     console.log(`key:${key}== ${info[key]}`)
+    //   }
+    // }  
+    // console.log('上报路径：', `${this.reportUrl}?${toQueryString(info)}`)
     new Image().src= `${this.reportUrl}?${toQueryString(info)}`
   }
 }

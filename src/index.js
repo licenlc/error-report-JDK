@@ -19,10 +19,9 @@ class ErrorCatch {
   }
 
   static report (type = 'Vue', error) {
-    captureException(handlerError(type, error))
+    captureException(handlerError(type, error, error.message))
   }
 }
-
 export default ErrorCatch
 
 
