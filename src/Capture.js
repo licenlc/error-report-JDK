@@ -1,4 +1,4 @@
-import { NetWork} from './NetWork'
+import NetWork from './NetWork'
 
 let work = new NetWork()
 
