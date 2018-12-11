@@ -3,10 +3,13 @@ import NetWork from './NetWork'
 let work = new NetWork()
 
 export const netWork = work
+
 /**
  * 处理stack中信息
  * 
- * @param {Ojbect} stack 
+ * @param { Ojbect } stack 
+ * 
+ * @return { String }
  */
 export const handlerStack = (error) => {
   let stack = error.stack.replace(/\n/gi, "").split(/\bat\b/).slice(0, 9).join("@").replace(/\?[^:]+/gi, "");
@@ -24,35 +27,56 @@ export const handlerStack = (error) => {
  * 参考：
  *  https://blog.sentry.io/2016/01/04/client-javascript-reporting-window-onerror
  * @param {*} error
- * 
- * 
+ * @return {Object}
  */
 export const handlerError = (type = '', error, message = '', url = '', line = '', column= '') => {
+  let ignores = work.getConfig().ignore
+  console.log(ignores)
+    if (ignores.length > 0) {
+      for (const key in ignores) {
+        if (ignores[key].test(message)) {
+          console.log('忽略上报')
+          return
+        }
+      }
+    }
 
-  let [ errorUrl, rowInfo ] = ['', [0, 0, 0]]
+    console.log('忽略上报info')
 
-  if (error && error.stack) {
-    const urlInfo = error.stack.match('https?://[^\n]+')[0] || ''
-    errorUrl = urlInfo instanceof Array ? urlInfo[0] : urlInfo
-    rowInfo = errorUrl.match(':(\\d+):(\\d+)')
-  }
-  return {
-    message: encodeURIComponent((message || error.message)),
-    url: encodeURIComponent(url || errorUrl),// 待修改
-    line: line || rowInfo[1],
-    column: column || rowInfo[2],
-    stack: encodeURIComponent(error),
-    type: type
-  }
+    let [ errorUrl, rowInfo ] = ['', [0, 0, 0]]
+
+    if (error && error.stack) {
+      const urlInfo = error.stack.match('https?://[^\n]+')[0] || ''
+      errorUrl = urlInfo instanceof Array ? urlInfo[0] : urlInfo
+      rowInfo = errorUrl.match(':(\\d+):(\\d+)')
+    }
+    return {
+      message: encodeURIComponent((message || error.message)),
+      url: encodeURIComponent(url || errorUrl),// 待修改
+      line: line || rowInfo[1],
+      column: column || rowInfo[2],
+      stack: encodeURIComponent(error),
+      type: type
+    }
 }
 
 /**
  * window.onerror
+ * 用来捕获js异常信息,无法捕获资源加载类异常
  */
 export function onError () {
   window.onerror = (message, url, line, column, stack) => {
     captureException(handlerError('onerror', stack, message, url, line, column))
   }
+}
+
+/**
+ * 资源加载类错误捕获，js，img，css
+ */
+export function resourceError () {
+  window.addEventListener('error', (e) => {
+
+  })
 }
 
 /**
@@ -85,6 +109,9 @@ export const repeatTime = (info, flag = false) => {
 
 let logArr = []
 export const captureException = (info = {}) => {
+  if (!info.message) {
+    return
+  }
   for (let i  = 0 ; i < logArr.length ; i++) {
     let log = logArr[i]
     if (!(info.message === log.message && info.url === log.url && info.column === log.column && info.line === log.line)) {

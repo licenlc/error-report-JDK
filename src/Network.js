@@ -1,9 +1,9 @@
-import { getUserAgent, getOS } from './system'
+import { getUserAgent, getBroswerInfo } from './system'
 import { repeatTime } from './Capture'
 import { toQueryString, extend } from './utils'
 import { onPromiseReject, onError, offPromiseReject } from './Capture'
 
-export class NetWork {
+export default class NetWork {
   constructor (config = {}) {
     this.config = config
     this.type = config.type || ''
@@ -27,12 +27,17 @@ export class NetWork {
     this.reportUrl = config.reportUrl
   }
 
+  getConfig () {
+    return this.config
+  }
+
   report (error) {
     // 是否大于重复上报的次数限制
     if (repeatTime(error) > this.config.repeatTime) {
       return
     }
-    const info = extend({}, {m: this.config.map}, getUserAgent(), getOS(), { location: encodeURIComponent(window.location.href) }, {date: this.config.data}, error)
+    let config = { m: this.config.map, date: this.config.date, project: this.config.project }
+    const info = extend({}, config, getUserAgent(), { location: encodeURIComponent(window.location.href) }, error)
     // for (let key in info) {
     //   if (['message', 'href', 'stack', 'url', 'error'].indexOf(key) > -1) {
     //     console.log(`key:${key}== ${decodeURIComponent(info[key])}`)

@@ -7,6 +7,8 @@ export const DEFAULT_CONFIG = {
   // 抽样 0-1
   random: 1,
   date: '2018-12-01',
+  // 对应工程
+  project: 'agent',
   // 重复上报的次数
   /**
    * 同一个页面相同错误上报错误次数
@@ -22,7 +24,8 @@ export const DEFAULT_CONFIG = {
   // 错误级别 1-debug 2-info 4-error
   level: 4,
   // 忽略某个错误, 支持 Regexp 和 Function
-  ignore: [/Script error/gi],
+  // ignore: [/Script error/gi],
+  ignore: [],
   // 延迟上报时间
   delay: 1000,
   logArr: 30
