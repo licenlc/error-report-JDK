@@ -1,7 +1,7 @@
-import { getUserAgent, getBroswerInfo } from './system'
-import { repeatTime } from './Capture'
+import { getUserAgent } from './system'
+import { repeatTime } from './capture/JSError'
 import { toQueryString, extend } from './utils'
-import { onPromiseReject, onError, offPromiseReject } from './Capture'
+import { onPromiseReject, onError, offPromiseReject } from './capture/JSError'
 
 export default class NetWork {
   constructor (config = {}) {
@@ -21,7 +21,7 @@ export default class NetWork {
   }
 
   setConfig (config) {
-    console.log('config:', JSON.stringify(config))
+    console.log('合并后的config:', JSON.stringify(config))
     this.config = config
     this.type = config.type
     this.reportUrl = config.reportUrl

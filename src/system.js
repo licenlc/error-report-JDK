@@ -35,3 +35,10 @@ let info = userAgent.match(reg)
  export const getUserAgent = () => {
    return { userAgent: userAgent, platform: platform}
  }
+
+ /**
+  * 获取页面路径
+  */
+ export const getHref = () => {
+   return { href : window.location.href }
+ }

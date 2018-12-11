@@ -1,6 +1,6 @@
 import { DEFAULT_CONFIG } from './config'
 import { isObj, isWindow, extend } from './utils'
-import { handlerError, captureException, netWork } from './Capture'
+import { handlerError, captureException, netWork } from './capture/JSError'
 
 let flag = false
 
@@ -10,7 +10,7 @@ class ErrorCatch {
       console.log('已经初始化了')
       return this
     }
-    if (!isWindow || !isObj(config) || !config.reportUrl) {
+    if (!isWindow || !isObj(config) || !config.reportUrl || config.project) {
       return
     }
     netWork.init().setConfig(extend(DEFAULT_CONFIG, config))

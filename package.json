@@ -1,16 +1,15 @@
 {
-  "name": "my-error-report",
+  "name": "error-tracker",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
   "scripts": {
     "build": "node build/build.js"
   },
-  "author": "",
+  "author": "licenlc@163.com",
   "license": "ISC",
   "devDependencies": {
     "babel-core": "^6.9.1",
-    "babel-eslint": "^6.1.2",
     "babel-loader": "^7.1.2",
     "babel-plugin-add-module-exports": "^0.2.1",
     "babel-plugin-external-helpers": "^6.22.0",
@@ -24,13 +23,6 @@
     "chalk": "^1.1.3",
     "codecov": "^2.2.0",
     "cross-env": "^5.0.5",
-    "eslint": "^5.9.0",
-    "eslint-config-standard": "^12.0.0",
-    "eslint-plugin-import": "^2.14.0",
-    "eslint-plugin-node": "^8.0.0",
-    "eslint-plugin-promise": "^4.0.1",
-    "eslint-plugin-standard": "^4.0.0",
-    "eventsource-polyfill": "^0.9.6",
     "karma": "^1.7.0",
     "karma-coverage": "^1.1.1",
     "karma-mocha": "^1.3.0",
