@@ -26,29 +26,32 @@ const builds = [{
     })
   ],
   banner
-}, {
-  entry: resolve('src/index.js'),
-  dest: resolve('dist/catchError.esm.js'),
-  format: 'es',
-  moduleName: 'CatchError',
-  plugins: [
-    babel({
-      exclude: 'node_modules/**' // only transpile our source code
-    })
-  ],
-  banner
-}, {
-  entry: resolve('src/index.js'),
-  dest: resolve('dist/catchError.min.js'),
-  format: 'umd',
-  moduleName: 'CatchError',
-  plugins: [
-    babel({
-      exclude: 'node_modules/**' // only transpile our source code
-    })
-  ],
-  banner
-}]
+}
+// , {
+//   entry: resolve('src/index.js'),
+//   dest: resolve('dist/catchError.esm.js'),
+//   format: 'es',
+//   moduleName: 'CatchError',
+//   plugins: [
+//     babel({
+//       exclude: 'node_modules/**' // only transpile our source code
+//     })
+//   ],
+//   banner
+// }
+// , {
+//   entry: resolve('src/index.js'),
+//   dest: resolve('dist/catchError.min.js'),
+//   format: 'umd',
+//   moduleName: 'CatchError',
+//   plugins: [
+//     babel({
+//       exclude: 'node_modules/**' // only transpile our source code
+//     })
+//   ],
+//   banner
+// }
+]
 
 function build(builds) {
   let built = 0

@@ -1,7 +1,4 @@
-import { getUserAgent } from './system'
-import { repeatTime } from './capture/JSError'
-import { toQueryString, extend } from './utils'
-import { onPromiseReject, onError, offPromiseReject } from './capture/JSError'
+import { install, uninstall } from './capture/index'
 
 export default class NetWork {
   constructor (config = {}) {
@@ -11,13 +8,12 @@ export default class NetWork {
   }
 
   init () {
-    onPromiseReject()
-    onError()
+    install()
     return this
   }
 
   destory () {
-    offPromiseReject()
+    uninstall()
   }
 
   setConfig (config) {
@@ -31,13 +27,13 @@ export default class NetWork {
     return this.config
   }
 
-  report (error) {
+  report (value) {
     // 是否大于重复上报的次数限制
-    if (repeatTime(error) > this.config.repeatTime) {
-      return
-    }
-    let config = { m: this.config.map, date: this.config.date, project: this.config.project }
-    const info = extend({}, config, getUserAgent(), { location: encodeURIComponent(window.location.href) }, error)
+    // if (repeatTime(error) > this.config.repeatTime) {
+    //   return
+    // }
+    // let config = { m: this.config.map, date: this.config.date, project: this.config.project }
+    // const info = extend({}, config, getUserAgent(), { location: encodeURIComponent(window.location.href) }, error)
     // for (let key in info) {
     //   if (['message', 'href', 'stack', 'url', 'error'].indexOf(key) > -1) {
     //     console.log(`key:${key}== ${decodeURIComponent(info[key])}`)
@@ -46,6 +42,6 @@ export default class NetWork {
     //   }
     // }  
     // console.log('上报路径：', `${this.reportUrl}?${toQueryString(info)}`)
-    new Image().src= `${this.reportUrl}?${toQueryString(info)}`
+    new Image().src= `${this.reportUrl}?${value}`
   }
 }

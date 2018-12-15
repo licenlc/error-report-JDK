@@ -1,9 +1,6 @@
-// 资源加载类异常处理文件
-
-const resourArr = []
+import { captureException } from './index'
 
 /**
- * 
  * @param {Event} event
  */
 const resourErrorFun = (event) => {
@@ -13,8 +10,7 @@ const resourErrorFun = (event) => {
     if (!isElement) {
       return
     }
-    // 上报资源加载类异常信息
-
+    captureException('resource', {})
   }
 }
 

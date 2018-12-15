@@ -1,10 +1,10 @@
-
+import { captureException } from './index'
 /**
  * 处理stack中信息
  * @param { Ojbect } stack 
  * @return { String }
  */
-export const handlerStack = (error) => {
+export const handlerStack = error => {
   let stack = error.stack.replace(/\n/gi, "").split(/\bat\b/).slice(0, 9).join("@").replace(/\?[^:]+/gi, "");
   const msg = error.toString();
   if (stack.indexOf(msg) < 0) {
@@ -22,15 +22,6 @@ export const handlerStack = (error) => {
  * @return { Object }
  */
 export const handlerError = (type = '', error, message = '', url = '', line = '', column= '') => {
-  // let ignores = work.getConfig().ignore
-  //   if (ignores.length > 0) {
-  //     for (const key in ignores) {
-  //       if (ignores[key].test(message)) {
-  //         // console.log('忽略上报')
-  //         return
-  //       }
-  //     }
-  //   }
     let [ errorUrl, rowInfo ] = ['', [0, 0, 0]]
     if (error && error.stack) {
       const urlInfo = error.stack.match('https?://[^\n]+')[0] || ''
@@ -53,7 +44,7 @@ export const handlerError = (type = '', error, message = '', url = '', line = ''
  */
 export function onError () {
   window.onerror = (message, url, line, column, stack) => {
-    return handlerError('onerror', stack, message, url, line, column)
+    captureException('js', handlerError('onerror', stack, message, url, line, column))
   }
 }
 
@@ -62,8 +53,8 @@ export function onError () {
  * promise的stack 在e.reason.stack
  * 也可能是 undefined
  */
-const handlerPormiseReject = (error) => {
-  return handlerError('unhandledrejection', error.reason, error.reason.message)
+const handlerPormiseReject = error => {
+  captureException('js', handlerError('unhandledrejection', error.reason, error.reason.message))
 }
 
 export const onPromiseReject = () => {

@@ -1,9 +1,9 @@
 import { DEFAULT_CONFIG } from './config'
 import { isObj, isWindow, extend } from './utils'
-import { handlerError, captureException, netWork } from './capture/JSError'
+import { handlerError } from './capture/js'
+import { captureException, netWork } from './capture/index'
 
 let flag = false
-
 class ErrorCatch {
   static setConfig(config) {
     if (flag) {
@@ -19,7 +19,7 @@ class ErrorCatch {
   }
 
   static report (type = 'Vue', error) {
-    captureException(handlerError(type, error, error.message))
+    captureException('js', handlerError(type, error, error.message))
   }
 }
 export default ErrorCatch

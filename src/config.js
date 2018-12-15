@@ -6,7 +6,7 @@ export const DEFAULT_CONFIG = {
   jsErrorRandom: 1,
   // 资源上报的错误比例
   resourceRandom: 1,
-  // 性能上报的比例
+  // 性能上报的比例, 暂时没有使用，待开发
   perfomanceRandom: 0.1,
   date: '2018-12-01',
   // 对应工程, 必传，方便后端系统统计
